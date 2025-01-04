@@ -4,8 +4,9 @@ import { AppModule } from './app.module';
 declare const module: any;
 
 async function bootstrap() {
+  console.log("init")
   const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
+  await app.listen(process.env.PORT ?? 3000, '0.0.0.0');
 
   if (module.hot) {
     module.hot.accept();
