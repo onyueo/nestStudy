@@ -15,22 +15,27 @@ export class UserController {
   }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  async findAll() {
+    const getUser = await this.userService.findAll()
+    Logger.debug(`모든유저 조회 : ${getUser}`)
+    return getUser;
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
+  async findOne(@Param('id') id: string) {
+    const getSingleUser = await this.userService.findOne(+id)
+    return getSingleUser;
   }
 
   @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
+  async update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
+    const updateUser = await this.userService.update(+id, updateUserDto)
+    return updateUser;
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
+  async remove(@Param('id') id: string) {
+    const deleteUser = await this.userService.remove(+id)
+    return deleteUser;
   }
 }
