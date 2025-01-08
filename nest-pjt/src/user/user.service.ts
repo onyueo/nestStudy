@@ -27,6 +27,10 @@ export class UserService {
     const singleUser = await this.prismaService.user.findUnique({
       where: {
         id
+      },
+      include: {
+        posts: true,
+        comments: true,
       }
     })
     return singleUser;

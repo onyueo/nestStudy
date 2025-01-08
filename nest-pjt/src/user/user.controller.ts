@@ -2,15 +2,21 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, Logger } from '@nest
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { PostService } from 'src/post/post.service';
+import { get } from 'http';
 
 @Controller('user')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService, 
+    private readonly postService: PostService
+  ) {}
+
 
   @Post()
   async create(@Body() createUserDto: CreateUserDto) {
     const user = await this.userService.create(createUserDto)
-    Logger.debug(`유저생성 : ${user.name} / ${user.email} / ${user.password}`)
+    Logger.debug(`유저생성 : ${user.name} / ${user.nickname} / ${user.email} / ${user.password}`)
     return user
   }
 
@@ -25,6 +31,12 @@ export class UserController {
   async findOne(@Param('id') id: string) {
     const getSingleUser = await this.userService.findOne(+id)
     return getSingleUser;
+  }
+
+  @Get(':id')
+  async findMyPosts(@Param('id') id: string) {
+    const getPosts = await this.postService.findUserPost(+id)
+    return getPosts
   }
 
   @Patch(':id')

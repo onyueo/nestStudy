@@ -9,6 +9,7 @@ export class PostController {
 
   @Post()
   create(@Body() createPostDto: CreatePostDto) {
+
     return this.postService.create(createPostDto);
   }
 

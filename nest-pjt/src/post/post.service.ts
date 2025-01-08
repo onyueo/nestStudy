@@ -1,26 +1,104 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException } from '@nestjs/common';
 import { CreatePostDto } from './dto/create-post.dto';
 import { UpdatePostDto } from './dto/update-post.dto';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class PostService {
-  create(createPostDto: CreatePostDto) {
-    return 'This action adds a new post';
+  constructor(
+    private readonly prismaService: PrismaService
+  ){}
+
+  async create(createPostDto: CreatePostDto) {
+    const {userId, ...data} =  createPostDto
+    try {
+      const post = await this.prismaService.post.create({
+        data: {
+          userId, ...data
+        }
+      })
+      return post;
+    } catch (error) {
+      throw new InternalServerErrorException('포스트 생성이 안되는뎁쇼')
+    }
   }
 
-  findAll() {
-    return `This action returns all post`;
+  async findAll() {
+    const posts = await this.prismaService.post.findMany({
+      include: {
+        user : {
+          select : {
+            id: true,
+            nickname: true,
+            email: true
+          }
+        }
+      }
+    })
+    return posts;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} post`;
+  async findOne(id: number) {
+    const post = await this.prismaService.post.findUnique({
+      where: {
+        id
+      },
+      include: {
+        user : {
+          select : {
+            id: true,
+            nickname: true,
+            email: true,
+          }
+        },
+        comments: {
+          select: {
+            user : {
+              select: {
+                id: true,
+                nickname: true,
+              }
+            },
+            id: true,
+            userId: true,
+            content: true,
+          }
+        }
+      }
+    })
+    return post;
   }
 
-  update(id: number, updatePostDto: UpdatePostDto) {
-    return `This action updates a #${id} post`;
+  async update(id: number, updatePostDto: UpdatePostDto) {
+    const postUpdate = await this.prismaService.post.update({
+      where: {
+        id
+      },
+      data: {
+        ...updatePostDto
+      }
+    })
+    return postUpdate;
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} post`;
+  async remove(id: number) {
+    const deletePost = await this.prismaService.post.deleteMany({
+      where: {
+        id
+      }
+    })
+    return deletePost;
   }
+
+  async findUserPost(userId: number) {
+    const findPost = await this.prismaService.post.findMany({
+      where: {
+        userId
+      }
+    })
+    return findPost
+  }
+
+
 }
+
