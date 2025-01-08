@@ -13,14 +13,51 @@ generator client {
   provider = "prisma-client-js"
 }
 
-
 model User {
-  id    Int     @default(autoincrement()) @id
-  name  String?
-  email String  @unique
-  password String
-  createdAt DateTime @default(now())
-  updatedAt DateTime
-  passwordChangedAt DateTime @default(now())
+  id                Int       @id @default(autoincrement())
+  email             String    @unique
+  nickname          String
+  name              String
+  password          String
+  posts             Post[]
+  comments          Comment[]
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  PasswordChangedAt DateTime  @default(now())
 }
 
+model Post {
+  id        Int       @id @default(autoincrement())
+  board     String
+  category  String
+  title     String
+  content   String
+  clicked   Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  user      User      @relation(fields: [userId], references: [id])
+  userId    Int
+  comments  Comment[]
+  tag       Tag[]
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement())
+  user      User     @relation(fields: [userId], references: [id])
+  userId    Int
+  post      Post     @relation(fields: [postId], references: [id])
+  postId    Int
+  content   String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  parentId Int?
+  parentComment Comment?  @relation("SubComments",fields: [parentId], references: [id])
+  subComment    Comment[] @relation("SubComments")
+}
+
+model Tag {
+  id    Int    @id @default(autoincrement())
+  text  String
+  posts Post[]
+}

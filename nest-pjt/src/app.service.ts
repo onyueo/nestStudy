@@ -4,6 +4,6 @@ import { Injectable } from '@nestjs/common';
 export class AppService {
   getHello(): string {
     console.log('get', new Date())
-    return 'Hello Worldddddddsdf?';
+    return "swagger link : 3000/api";
   }
 }
