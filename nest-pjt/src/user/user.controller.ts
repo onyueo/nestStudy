@@ -3,7 +3,6 @@ import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { PostService } from 'src/post/post.service';
-import { get } from 'http';
 
 @Controller('user')
 export class UserController {

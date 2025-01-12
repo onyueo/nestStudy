@@ -9,6 +9,17 @@ export class CommentService {
     private readonly prismaService: PrismaService
   ){}
 
+  private userInclude() {
+    return {
+      user: {
+        select: {
+          id: true,
+          nickname: true,
+        }
+      }
+    }
+  }
+
   async create(createCommentDto: CreateCommentDto) {
     const data = createCommentDto
     try {
@@ -23,14 +34,7 @@ export class CommentService {
 
   async findAll() {
     const comments = await this.prismaService.comment.findMany({
-      include: {
-        user: {
-          select: {
-            id: true,
-            nickname: true,
-          }
-        }
-      }
+      include: this.userInclude()
     })
     return comments;
   }
@@ -40,14 +44,7 @@ export class CommentService {
       where: {
         id
       },
-      include: {
-        user: {
-          select: {
-            id: true,
-            nickname: true,
-          }
-        }
-      }
+      include: this.userInclude()
     })
     return comment;
   }
