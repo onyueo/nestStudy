@@ -9,6 +9,13 @@ export class PostService {
     private readonly prismaService: PrismaService
   ){}
 
+  private userInclude = {
+      select: {
+        id: true,
+        nickname: true,
+      }
+  }
+
   async create(createPostDto: CreatePostDto) {
     const {userId, ...data} =  createPostDto
     try {
@@ -26,13 +33,7 @@ export class PostService {
   async findAll() {
     const posts = await this.prismaService.post.findMany({
       include: {
-        user : {
-          select : {
-            id: true,
-            nickname: true,
-            email: true
-          }
-        }
+        user : this.userInclude
       }
     })
     return posts;
@@ -44,21 +45,10 @@ export class PostService {
         id
       },
       include: {
-        user : {
-          select : {
-            id: true,
-            nickname: true,
-            email: true,
-          }
-        },
+        user : this.userInclude,
         comments: {
           select: {
-            user : {
-              select: {
-                id: true,
-                nickname: true,
-              }
-            },
+            user : this.userInclude,
             id: true,
             userId: true,
             content: true,

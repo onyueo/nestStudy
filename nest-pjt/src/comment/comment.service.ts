@@ -9,15 +9,13 @@ export class CommentService {
     private readonly prismaService: PrismaService
   ){}
 
-  private userInclude() {
-    return {
+  private userInclude = {
       user: {
         select: {
           id: true,
           nickname: true,
         }
       }
-    }
   }
 
   async create(createCommentDto: CreateCommentDto) {
@@ -34,7 +32,7 @@ export class CommentService {
 
   async findAll() {
     const comments = await this.prismaService.comment.findMany({
-      include: this.userInclude()
+      include: this.userInclude
     })
     return comments;
   }
@@ -44,7 +42,7 @@ export class CommentService {
       where: {
         id
       },
-      include: this.userInclude()
+      include: this.userInclude
     })
     return comment;
   }
